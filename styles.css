@@ -34,18 +34,32 @@ header {
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
-
 .input-section {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
     margin-bottom: 20px;
+    position: relative; /* to position suggestions-list correctly */
+}
+
+.input-wrapper {
+    position: relative; /* For absolutely positioning the suggestions */
+    width: 100%; /* Full width */
+    margin-bottom: 10px; /* Space between input and button */
 }
 
 #guessInput {
-    flex-grow: 1;
+    width: 100%; /* Fill the wrapper */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 16px;
+}
+
+#guessInput:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px #007bff;
 }
 
 #submitGuess {
@@ -55,13 +69,35 @@ header {
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
+    align-self: flex-start; /* Aligns button to start of container */
 }
 
 #submitGuess:hover {
     background-color: #0056b3;
 }
 
-.message {
-    font-size: 1.1em;
-    font-weight: bold;
+.suggestions-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    position: absolute; /* Positioned relative to input-wrapper */
+    top: calc(100% + 5px); /* Below the input, with a small gap */
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: none;
+}
+
+.suggestions-list li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions-list li:hover {
+    background-color: #f0f0f0;
 }
