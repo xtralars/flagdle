@@ -1,13 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Simple array of countries and their flags
-    const flags = [
-        { country: "Finland", flagUrl: "finland.png" },
-        { country: "Sweden", flagUrl: "sweden.png" },
-        { country: "Norway", flagUrl: "norway.png" },
-        // Add more countries and flags as needed
-    ];
-
-    let currentFlag;
+    let countries = [];
+    let currentCountry;
     let attempts = 5;
 
     const flagImage = document.getElementById("flagImage");
@@ -15,17 +8,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitGuess = document.getElementById("submitGuess");
     const messageDisplay = document.getElementById("messageDisplay");
 
-    function pickRandomFlag() {
-        const randomIndex = Math.floor(Math.random() * flags.length);
-        currentFlag = flags[randomIndex];
-        flagImage.src = currentFlag.flagUrl;
+    async function fetchCountries() {
+        try {
+            const response = await fetch("https://restcountries.com/v3.1/all");
+            const data = await response.json();
+            countries = data.map(country => ({
+                name: country.name.common,
+                flagUrl: country.flags.svg
+            }));
+            resetGame();
+        } catch (error) {
+            console.error("Error fetching countries:", error);
+            messageDisplay.textContent = "Failed to load country data.";
+        }
+    }
+
+    function pickRandomCountry() {
+        const randomIndex = Math.floor(Math.random() * countries.length);
+        currentCountry = countries[randomIndex];
+        flagImage.src = currentCountry.flagUrl;
     }
 
     function resetGame() {
+        if (countries.length === 0) {
+            messageDisplay.textContent = "No countries data available.";
+            return;
+        }
         attempts = 5;
         guessInput.value = '';
         messageDisplay.textContent = "";
-        pickRandomFlag();
+        pickRandomCountry();
     }
 
     function checkGuess() {
@@ -35,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (userGuess.toLowerCase() === currentFlag.country.toLowerCase()) {
+        if (userGuess.toLowerCase() === currentCountry.name.toLowerCase()) {
             messageDisplay.textContent = "Correct! You guessed the flag.";
             setTimeout(resetGame, 2000); // Reset the game after 2 seconds
         } else {
@@ -43,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (attempts > 0) {
                 messageDisplay.textContent = `Wrong! You have ${attempts} attempts left.`;
             } else {
-                messageDisplay.textContent = `Game over! The correct answer was ${currentFlag.country}.`;
+                messageDisplay.textContent = `Game over! The correct answer was ${currentCountry.name}.`;
                 setTimeout(resetGame, 2000); // Reset the game after 2 seconds
             }
         }
@@ -51,6 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     submitGuess.addEventListener("click", checkGuess);
 
-    // Initialize game
-    resetGame();
+    // Fetch countries data
+    fetchCountries();
 });
