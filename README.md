@@ -1,1 +1,1 @@
-xtralars.github.io/flagdle
+xtralars.github.io/Flagdle
