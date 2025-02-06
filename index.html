@@ -16,7 +16,10 @@
                 <img src="flag-placeholder.png" alt="Country Flag" id="flagImage">
             </div>
             <div class="input-section">
-                <input type="text" id="guessInput" placeholder="Enter your guess">
+                <div class="input-wrapper">
+                    <input type="text" id="guessInput" placeholder="Enter your guess">
+                    <ul id="suggestions" class="suggestions-list"></ul>
+                </div>
                 <button id="submitGuess">Submit</button>
             </div>
             <div class="message" id="messageDisplay"></div>
