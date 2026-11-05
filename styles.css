@@ -1,103 +1,335 @@
+/* ---------- Tokens ---------- */
+:root {
+    --bg: #eef1f5;
+    --surface: #ffffff;
+    --surface-alt: #f3f5f8;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #d1d5db;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-ring: rgba(37, 99, 235, 0.35);
+    --ok: #15803d;
+    --bad: #b91c1c;
+    --shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+    --radius: 10px;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #111827;
+        --surface: #1f2937;
+        --surface-alt: #2b3649;
+        --text: #f3f4f6;
+        --muted: #9ca3af;
+        --border: #4b5563;
+        --accent: #3b82f6;
+        --accent-hover: #60a5fa;
+        --accent-ring: rgba(96, 165, 250, 0.45);
+        --ok: #4ade80;
+        --bad: #f87171;
+        --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+    font-family: var(--font);
+    background-color: var(--bg);
+    color: var(--text);
     margin: 0;
-    padding: 0;
+    padding: 16px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    min-height: 100dvh;   /* accounts for mobile browser toolbars */
 }
 
 .game-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 400px;
+    background-color: var(--surface);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 420px;
     text-align: center;
 }
 
-header {
-    margin-bottom: 20px;
+header { margin-bottom: 20px; }
+
+h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.2;
 }
 
+/* ---------- Image area ---------- */
+/* Fixed-height frame so the card doesn't jump when flags of
+   different proportions load (Nepal, Switzerland, Qatar...) */
 .flag-display {
+    height: 240px;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-alt);
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 .flag-display img {
-    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
 }
+
+/* Portrait quiz: add class="portrait" to .flag-display for a taller frame */
+.flag-display.portrait { height: 340px; }
+
+/* ---------- Input ---------- */
 .input-section {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    margin-bottom: 20px;
-    position: relative; /* to position suggestions-list correctly */
+    margin-bottom: 16px;
+    position: relative;
 }
 
 .input-wrapper {
-    position: relative; /* For absolutely positioning the suggestions */
-    width: 100%; /* Full width */
-    margin-bottom: 10px; /* Space between input and button */
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 #guessInput {
-    width: 100%; /* Fill the wrapper */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--surface);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px;      /* 16px+ stops iOS zooming into the field */
 }
+
+#guessInput::placeholder { color: var(--muted); }
 
 #guessInput:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 5px #007bff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring);
+}
+
+/* ---------- Buttons ---------- */
+#submitGuess,
+.bonus-btn {
+    font-family: inherit;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.05s;
 }
 
 #submitGuess {
-    background-color: #007bff;
+    background-color: var(--accent);
     color: #fff;
     border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    align-self: flex-start; /* Aligns button to start of container */
+    padding: 12px;
+    width: 100%;           /* full-width = easy thumb target on phones */
+    font-weight: 600;
 }
 
-#submitGuess:hover {
-    background-color: #0056b3;
+#submitGuess:hover { background-color: var(--accent-hover); }
+#submitGuess:active { transform: translateY(1px); }
+
+#submitGuess:focus-visible,
+.bonus-btn:focus-visible {
+    outline: 3px solid var(--accent-ring);
+    outline-offset: 2px;
 }
 
+#submitGuess:disabled,
+.bonus-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Multiple-choice answers (president quiz) */
+#optionsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.bonus-btn {
+    background-color: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 12px 8px;
+    min-height: 52px;
+    line-height: 1.25;
+}
+
+.bonus-btn:hover {
+    background-color: var(--surface-alt);
+    border-color: var(--accent);
+}
+
+@media (max-width: 380px) {
+    #optionsContainer { grid-template-columns: 1fr; }
+}
+
+/* ---------- Suggestions ---------- */
 .suggestions-list {
     list-style: none;
     margin: 0;
-    padding: 0;
-    max-height: 150px;
+    padding: 4px 0;
+    max-height: 200px;
     overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    position: absolute; /* Positioned relative to input-wrapper */
-    top: calc(100% + 5px); /* Below the input, with a small gap */
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--surface);
+    box-shadow: var(--shadow);
+    position: absolute;
+    top: calc(100% + 4px);
     left: 0;
     right: 0;
     z-index: 1000;
     display: none;
+    text-align: left;      /* container is centred; list items shouldn't be */
 }
 
 .suggestions-list li {
-    padding: 10px;
+    padding: 10px 14px;
     cursor: pointer;
 }
 
-.suggestions-list li:hover {
-    background-color: #f0f0f0;
+.suggestions-list li:hover,
+.suggestions-list li.selected-suggestion {
+    background-color: var(--surface-alt);
 }
+
+/* ---------- Feedback ---------- */
+.message {
+    min-height: 1.5em;     /* reserves space so the layout doesn't shift */
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.message.correct { color: var(--ok); }
+.message.wrong   { color: var(--bad); }
+
+#presidentNumberHint {
+    font-weight: 600;
+    color: var(--muted);
+    margin: 0 0 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+}
+
+/* ---------- Game UI additions ---------- */
+[hidden] { display: none !important; }
+
+.stats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 0 0 16px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.stats strong { color: var(--text); }
+
+.attempts {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: -8px 0 16px;
+}
+
+.attempts .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    transition: background-color 0.2s;
+}
+
+.attempts .dot.used { background-color: var(--border); }
+
+.button-row { display: flex; gap: 8px; }
+.button-row #submitGuess { flex: 2; width: auto; }
+
+.btn-secondary {
+    flex: 1;
+    font-family: inherit;
+    font-size: 1rem;
+    background-color: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 10px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover:not(:disabled) { background-color: var(--surface-alt); }
+
+.btn-secondary:focus-visible {
+    outline: 3px solid var(--accent-ring);
+    outline-offset: 2px;
+}
+
+.btn-secondary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+#nextButton {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    background-color: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#nextButton:hover { background-color: var(--accent-hover); }
+
+#nextButton:focus-visible {
+    outline: 3px solid var(--accent-ring);
+    outline-offset: 2px;
+}
+
+/* Multiple-choice result states (president quiz) */
+.bonus-btn.correct,
+.bonus-btn.wrong { opacity: 1; font-weight: 600; }
+
+.bonus-btn.correct {
+    border-color: var(--ok);
+    box-shadow: inset 0 0 0 2px var(--ok);
+    color: var(--ok);
+}
+
+.bonus-btn.wrong {
+    border-color: var(--bad);
+    box-shadow: inset 0 0 0 2px var(--bad);
+    color: var(--bad);
+}
+
+#bonusQuestionText { font-weight: 600; margin: 0 0 12px; }
+#bonusSection { margin-bottom: 16px; }
